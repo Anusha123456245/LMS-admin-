@@ -214,6 +214,7 @@ import {
 import axios from 'axios';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 const LessonManager = () => {
   const [open, setOpen] = useState(false);
@@ -224,7 +225,6 @@ const LessonManager = () => {
   const [courses, setCourses] = useState([]);
   const [lessons, setLessons] = useState([]);
 
-  // Fetch all courses and lessons on mount
   useEffect(() => {
     fetchCourses();
     fetchLessons();
@@ -248,20 +248,21 @@ const LessonManager = () => {
     }
   };
 
-  const handleOpen = () => {
-    setOpen(true);
-    setEditing(false);
+  const resetForm = () => {
     setTitle('');
     setCourseId('');
     setEditId(null);
+    setEditing(false);
+  };
+
+  const handleOpen = () => {
+    resetForm();
+    setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setTitle('');
-    setCourseId('');
-    setEditId(null);
-    setEditing(false);
+    resetForm();
   };
 
   const handleSubmit = async (e) => {
@@ -274,20 +275,17 @@ const LessonManager = () => {
           title,
           courseId,
         });
-
-        await fetchLessons(); // Refresh
+        await fetchLessons();
         alert('Lesson updated!');
       } else {
         const res = await axios.post('http://localhost:5000/lessons', {
           title,
           courseId,
         });
-
         const course = courses.find((c) => c.id === courseId);
         setLessons([...lessons, { ...res.data, course }]);
         alert('Lesson created!');
       }
-
       handleClose();
     } catch (err) {
       console.error('Submit error:', err);
@@ -317,20 +315,28 @@ const LessonManager = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 10,ml:9 }}>
+  
+    <Container maxWidth="md" sx={{ mt:1,ml:1}}  >
       {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4" fontWeight={700} color='primary.main' mb={2} sx={{mt:2}}>
+      <Box p={4} sx={{ mt: 4,ml:-4 }}>
+        <Typography variant="h4" fontWeight={700} color="primary.main">
           Lesson Management
         </Typography>
-        <Button variant="contained" size="large" onClick={handleOpen}>
-          + Add Lesson
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleOpen}
+          sx={{ mb: 2, mt: 2 }}
+        >
+          Add Lesson
         </Button>
-      </Stack>
+      </Box>
 
       {/* Dialog */}
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>{editing ? 'Edit Lesson' : 'Create New Lesson'}</DialogTitle>
+        <DialogTitle sx={{ color: 'primary.main', fontWeight: 800, fontSize: '24px' }}>
+          {editing ? 'Edit Lesson' : 'Create New Lesson'}
+        </DialogTitle>
         <DialogContent>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
             <TextField
@@ -365,11 +371,11 @@ const LessonManager = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Table */}
+      {/* Lessons Table */}
       <Paper elevation={3}>
         <TableContainer sx={{ maxHeight: 400 }}>
           <Table stickyHeader>
-            <TableHead>
+            <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
               <TableRow>
                 <TableCell>Lesson Title</TableCell>
                 <TableCell>Course</TableCell>

@@ -214,12 +214,16 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  TableContainer,
   TableBody,
   Snackbar,
   Alert,
-  CircularProgress
+  CircularProgress,
+  IconButton
 } from '@mui/material';
 import axios from 'axios';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function QuizManager() {
   const [formData, setFormData] = useState({
@@ -299,6 +303,28 @@ export default function QuizManager() {
       alert('Failed to create quiz.');
     }
   };
+  const handleEdit = (quiz) => {
+  setFormData({
+    label: quiz.label,
+    questions: quiz.questions,
+    duration: quiz.duration,
+    marks: quiz.marks,
+    lessonContentId: quiz.lessonContentId
+  });
+  setOpenDialog(true);
+};
+
+const handleDelete = async (id) => {
+  if (window.confirm("Are you sure you want to delete this quiz?")) {
+    try {
+      await axios.delete(`http://localhost:5000/quiz/${id}`);
+      fetchQuizzes();
+    } catch (err) {
+      console.error("Failed to delete quiz", err);
+    }
+  }
+};
+
 
   return (
     <Box sx={{ p: 4, mt: 5 }}>
@@ -310,39 +336,50 @@ export default function QuizManager() {
         Create Quiz
       </Button>
 
-      {/* Quiz Table */}
-      <Paper sx={{ overflowX: 'auto' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Label</TableCell>
-              <TableCell>Questions</TableCell>
-              <TableCell>Duration (mins)</TableCell>
-              <TableCell>Marks</TableCell>
-              <TableCell>Lesson Content</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {quizzes.map((quiz) => (
-              <TableRow key={quiz.id}>
-                <TableCell>{quiz.label}</TableCell>
-                <TableCell>{quiz.questions}</TableCell>
-                <TableCell>{quiz.duration}</TableCell>
-                <TableCell>{quiz.marks}</TableCell>
-                <TableCell>
-                  {quiz.lessonContent?.title || quiz.lessonContentId || 'N/A'}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
+     <Paper sx={{ overflowX: 'auto', mt: 3 }}>
+  <TableContainer>
+    <Table>
+      <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
+        <TableRow>
+          <TableCell><strong>Label</strong></TableCell>
+          <TableCell><strong>Questions</strong></TableCell>
+          <TableCell><strong>Duration (mins)</strong></TableCell>
+          <TableCell><strong>Marks</strong></TableCell>
+          <TableCell><strong>Lesson Content</strong></TableCell>
+          <TableCell><strong>Actions</strong></TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {quizzes.map((quiz) => (
+          <TableRow key={quiz.id}>
+            <TableCell>{quiz.label}</TableCell>
+            <TableCell>{quiz.questions}</TableCell>
+            <TableCell>{quiz.duration}</TableCell>
+            <TableCell>{quiz.marks}</TableCell>
+            <TableCell>
+              {quiz.lessonContent?.title || quiz.lessonContentId || 'N/A'}
+            </TableCell>
+            <TableCell>
+              <IconButton onClick={() => handleEdit(quiz)} color="primary">
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={() => handleDelete(quiz.id)} color="error">
+                <DeleteIcon />
+              </IconButton>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
+</Paper>
+
 
       {/* Create Quiz Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Create Quiz</DialogTitle>
+        <DialogTitle sx={{ color: "primary.main", fontWeight: 800 ,fontSize:'24px',}}>Create Quiz</DialogTitle>
         <DialogContent>
-          <Box component="form" noValidate autoComplete="off" sx={{ mt: 1 }}>
+          <Box component="form" noValidate autoComplete="off" sx={{ }}>
             <TextField
               fullWidth
               margin="normal"
@@ -401,7 +438,7 @@ export default function QuizManager() {
                 <MenuItem disabled>No lesson content found</MenuItem>
               )}
             </TextField> */}
-           <TextField
+          <TextField
   fullWidth
   margin="normal"
   select
@@ -417,13 +454,15 @@ export default function QuizManager() {
   ) : lessonContents.length > 0 ? (
     lessonContents.map((lesson) => (
       <MenuItem key={lesson.id} value={lesson.id}>
-        {lesson.title}
+        {/* 👇 Adjust label here */}
+        {lesson.label || lesson.title || `${lesson.type} - ${lesson.id}`}
       </MenuItem>
     ))
   ) : (
     <MenuItem disabled>No lesson content found</MenuItem>
   )}
 </TextField>
+
 
           </Box>
         </DialogContent>

@@ -17,8 +17,11 @@ import {
   TableHead,
   TableRow,
   Snackbar,
-  Alert
+  Alert,
+  IconButton
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
 export default function QuizQuestionPage() {
@@ -32,12 +35,18 @@ export default function QuizQuestionPage() {
   const [quizList, setQuizList] = useState([]);
   const [quizQuestions, setQuizQuestions] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
+  useEffect(() => {
+    fetchQuizzes();
+    fetchQuestions();
+  }, []);
 
   const fetchQuizzes = async () => {
     try {
       const res = await axios.get('http://localhost:5000/quiz');
-          console.log('Fetched quizzes:', res.data); // <-- DEBUG LOG
+            console.log("Quiz data fetched:", res.data); // ✅ check what's coming
 
       setQuizList(res.data);
     } catch (error) {
@@ -56,10 +65,9 @@ export default function QuizQuestionPage() {
     }
   };
 
-  useEffect(() => {
-    fetchQuizzes();
-    fetchQuestions();
-  }, []);
+  const showSnackbar = (message, severity = 'success') => {
+    setSnackbar({ open: true, message, severity });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,54 +81,81 @@ export default function QuizQuestionPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const payload = {
-        question: formData.question,
-        options: formData.options,
-        answer: formData.answer,
-        quizId: formData.quizId
-      };
-      await axios.post('http://localhost:5000/quiz-question', payload);
-      setSnackbar({ open: true, message: 'Quiz question created successfully!', severity: 'success' });
-      setOpen(false);
+  const handleOpenDialog = (question = null) => {
+    if (question) {
+      setEditingId(question.id);
       setFormData({
-        question: '',
-        options: ['', '', '', ''],
-        answer: '',
-        quizId: ''
+        question: question.question,
+        options: question.options || ['', '', '', ''],
+        answer: question.answer,
+        quizId: question.quizId
       });
-      fetchQuestions(); // Refresh list
-    } catch (error) {
-      console.error('Error creating quiz question:', error);
-      setSnackbar({ open: true, message: 'Failed to create quiz question', severity: 'error' });
+    } else {
+      setEditingId(null);
+      setFormData({ question: '', options: ['', '', '', ''], answer: '', quizId: '' });
+    }
+    setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this question?')) {
+      try {
+        await axios.delete(`http://localhost:5000/quiz-question/${id}`);
+        showSnackbar('Question deleted successfully');
+        fetchQuestions();
+      } catch (error) {
+        console.error('Delete failed:', error);
+        showSnackbar('Failed to delete question', 'error');
+      }
     }
   };
 
-  const showSnackbar = (message, severity = 'success') => {
-    setSnackbar({ open: true, message, severity });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      question: formData.question,
+      options: formData.options,
+      answer: formData.answer,
+      quizId: formData.quizId
+    };
+    try {
+      if (editingId) {
+await axios.patch(`http://localhost:5000/quiz-question/${editingId}`, payload);
+        showSnackbar('Question updated successfully');
+      } else {
+        await axios.post('http://localhost:5000/quiz-question', payload);
+        showSnackbar('Question created successfully');
+      }
+      setOpen(false);
+      setEditingId(null);
+      setFormData({ question: '', options: ['', '', '', ''], answer: '', quizId: '' });
+      fetchQuestions();
+    } catch (error) {
+      console.error('Save failed:', error);
+      showSnackbar('Failed to save question', 'error');
+    }
   };
 
   return (
-    <Box sx={{ p: 4,mt:5 }}>
+    <Box sx={{ p: 4, mt: 5 }}>
       <Typography variant="h4" fontWeight={600} color="primary.main" mb={2}>
         Quiz Questions
       </Typography>
 
-      <Button variant="contained" onClick={() => setOpen(true)}>
+      <Button variant="contained" onClick={() => handleOpenDialog()}>
         Add Quiz Question
       </Button>
 
       {/* Table */}
       <TableContainer component={Paper} sx={{ mt: 4 }}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
             <TableRow>
               <TableCell>Question</TableCell>
               <TableCell>Options</TableCell>
               <TableCell>Answer</TableCell>
               <TableCell>Quiz</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -134,15 +169,25 @@ export default function QuizQuestionPage() {
                 </TableCell>
                 <TableCell>{q.answer}</TableCell>
                 <TableCell>{q.quiz?.title || q.quizId}</TableCell>
+                <TableCell align="center">
+                  <IconButton onClick={() => handleOpenDialog(q)} color="primary">
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(q.id)} color="error">
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Dialog Form */}
+      {/* Dialog */}
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ backgroundColor: '#f0f0f0', fontWeight: 'bold' }}>Create Quiz Question</DialogTitle>
+        <DialogTitle sx={{ color: "primary.main", fontWeight: 800 ,fontSize:'24px',}}>
+          {editingId ? 'Edit' : 'Create'} Quiz Question
+        </DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
@@ -172,36 +217,46 @@ export default function QuizQuestionPage() {
             onChange={handleChange}
           />
          <TextField
-  fullWidth
   select
-  margin="normal"
+  fullWidth
   label="Quiz"
   name="quizId"
+  margin="normal"
   value={formData.quizId}
   onChange={handleChange}
 >
-  {quizList.map((quiz) => (
-    <MenuItem key={quiz.id} value={quiz.id}>
-      {quiz.title}
-    </MenuItem>
-  ))}
+  {quizList.length === 0 ? (
+    <MenuItem disabled>No quizzes available</MenuItem>
+  ) : (
+    quizList.map((quiz) => (
+      <MenuItem key={quiz.id} value={quiz.id}>
+        {quiz.title || quiz.name || `Quiz ${quiz.id}`}
+      </MenuItem>
+    ))
+  )}
 </TextField>
- 
+
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit}>Submit</Button>
+          <Button variant="contained" onClick={handleSubmit}>
+            {editingId ? 'Update' : 'Submit'}
+          </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar Alert */}
+      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

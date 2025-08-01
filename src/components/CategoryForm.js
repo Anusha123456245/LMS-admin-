@@ -100,16 +100,10 @@ export default function CategoryManager() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt:12,ml:8}}>
+    <Container maxWidth="md" sx={{ ml:-5}}>
       {/* Header */}
-      <Box
-  display="flex"
-  justifyContent="space-between"
-  alignItems="center"
-  flexDirection={{ xs: 'column', sm: 'row' }}
-  gap={2}
-  mb={3}
->
+      
+<Box p={4} sx={{ mt: 4 }}>
   <Typography
     variant="h4"
     fontWeight={700}
@@ -118,10 +112,14 @@ export default function CategoryManager() {
   >
     Category Management
   </Typography>
+
   <Button
     variant="contained"
     onClick={handleOpen}
-    sx={{ width: { xs: '100%', sm: 'auto' } }}
+    sx={{
+      width: { xs: '100%', sm: 'auto' },
+      mt: 2, // Add margin-top here
+    }}
   >
     Add Category
   </Button>
@@ -129,7 +127,7 @@ export default function CategoryManager() {
 
 
       {/* Table */}
-      <Paper elevation={3} sx={{ p: 2 }}>
+      <Paper elevation={3} sx={{ p: 2 ,ml:4}}>
         <TableContainer>
           <Table size="small">
             <TableHead sx={{ backgroundColor: '#f5f5f5' }}>

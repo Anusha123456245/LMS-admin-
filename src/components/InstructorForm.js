@@ -189,7 +189,7 @@ const handleSubmit = async () => {
 
       <TableContainer component={Paper} sx={{ mt: 3 }}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Bio</TableCell>

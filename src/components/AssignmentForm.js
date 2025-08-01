@@ -1,216 +1,17 @@
 
-// import React, { useState } from 'react';
-// import {
-//   Card,
-//   CardContent,
-//   Typography,
-//   TextField,
-//   Button,
-//   MenuItem,
-//   Grid,
-//   Divider,
-//   Box,
-//   Stack,
-// } from '@mui/material';
-// import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import axios from 'axios';
-
-// export default function AssignmentForm() {
-//   const [title, setTitle] = useState('');
-//   const [description, setDescription] = useState('');
-//   const [dueDate, setDueDate] = useState(null);
-//   const [downloadLink, setDownloadLink] = useState('');
-//   const [submitStatus, setSubmitStatus] = useState('');
-//   const [status, setStatus] = useState('');
-//   const [lessonContentId, setLessonContentId] = useState('');
-
-//   const submitStatusOptions = ['Submitted', 'Not Submitted'];
-//   const statusOptions = ['Pending', 'Completed'];
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const formData = {
-//       title,
-//       description,
-//       dueDate: dueDate ? dueDate.toISOString() : null,
-//       downloadLink,
-//       submitStatus,
-//       status,
-//       lessonContentId,
-//     };
-
-//     try {
-//       const res = await axios.post('http://localhost:5000/assignments', formData);
-//       console.log('Submitted:', res.data);
-//       alert('Assignment submitted successfully!');
-//     } catch (error) {
-//       console.error('Submission error:', error);
-//       alert('Failed to submit assignment.');
-//     }
-//   };
-
-//   return (
-//     <LocalizationProvider dateAdapter={AdapterDayjs}>
-//       <Box sx={{ mt: 10, px: 3, display: 'flex', justifyContent: 'center' }}>
-//         <Card
-//           elevation={5}
-//           sx={{
-//             maxWidth: 800,
-//             width: '100%',
-//             borderRadius: 6,
-//             px: 3,
-//             py: 2,
-//             background: '#f9f9fb',
-//           }}
-//         >
-//           <CardContent>
-//             <Typography variant="h4" fontWeight={600} color="primary.main" mb={2}>
-//               Create Assignment
-//             </Typography>
-
-//             <Divider sx={{ mb: 3 }} />
-
-//             <form onSubmit={handleSubmit} noValidate>
-//               <Stack spacing={3}>
-//                 <TextField
-//                   label="Assignment Title"
-//                   placeholder="Enter assignment title"
-//                   fullWidth
-//                   value={title}
-//                   onChange={(e) => setTitle(e.target.value)}
-//                   required
-//                 />
-
-//                 <TextField
-//                   label="Description"
-//                   placeholder="Enter detailed description"
-//                   multiline
-//                   rows={4}
-//                   fullWidth
-//                   value={description}
-//                   onChange={(e) => setDescription(e.target.value)}
-//                   required
-//                 />
-
-//                 <DesktopDatePicker
-//                   label="Due Date"
-//                   inputFormat="YYYY-MM-DD"
-//                   value={dueDate}
-//                   onChange={setDueDate}
-//                   renderInput={(params) => (
-//                     <TextField {...params} fullWidth required />
-//                   )}
-//                 />
-
-//                 <TextField
-//                   label="Download Link"
-//                   placeholder="https://example.com/resource.pdf"
-//                   fullWidth
-//                   value={downloadLink}
-//                   onChange={(e) => setDownloadLink(e.target.value)}
-//                 />
-
-//                 <Grid container spacing={6} >
-//                   <Grid item xs={12} sm={6} >
-//                     <TextField sx={{ width: '330px' }}
-//                       select
-//                       label="Submission Status"
-                      
-//                       value={submitStatus}
-//                       onChange={(e) => setSubmitStatus(e.target.value)}
-//                       required
-//                     >
-//                       {submitStatusOptions.map((option) => (
-//                         <MenuItem key={option} value={option}>
-//                           {option}
-//                         </MenuItem>
-//                       ))}
-//                     </TextField>
-//                   </Grid>
-
-//                   <Grid item xs={12} sm={6}>
-//                     <TextField sx={{ width: '330px' }}
-//                       select
-//                       label="Assignment Status"
-                      
-//                       value={status}
-//                       onChange={(e) => setStatus(e.target.value)}
-//                       required
-//                     >
-//                       {statusOptions.map((option) => (
-//                         <MenuItem key={option} value={option}>
-//                           {option}
-//                         </MenuItem>
-//                       ))}
-//                     </TextField>
-//                   </Grid>
-//                 </Grid>
-
-//                 <TextField
-//                   label="Lesson Content ID"
-//                   placeholder="Enter Lesson Content ID"
-//                   fullWidth
-//                   value={lessonContentId}
-//                   onChange={(e) => setLessonContentId(e.target.value)}
-//                 />
-
-//                 <Divider sx={{ mt: 3 }} />
-
-//                 <Button
-//                   type="submit"
-//                   variant="contained"
-//                   size="large"
-//                   color="primary"
-//                   sx={{
-//                     borderRadius: 3,
-//                     textTransform: 'none',
-//                     fontWeight: 600,
-//                     fontSize: '1rem',
-//                     boxShadow: 3,
-//                     py: 1.5,
-//                   }}
-//                   fullWidth
-//                 >
-//                   Submit Assignment
-//                 </Button>
-//               </Stack>
-//             </form>
-//           </CardContent>
-//         </Card>
-//       </Box>
-//     </LocalizationProvider>
-//   );
-// }
 import React, { useEffect, useState } from 'react';
 import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  MenuItem,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Divider,
-  Stack,
+  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
+  TextField, MenuItem, Typography, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, Paper, IconButton, Stack
 } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Add } from '@mui/icons-material';
+import { Add, Edit, Delete } from '@mui/icons-material';
 import axios from 'axios';
+import CircularProgress from '@mui/material/CircularProgress';
+import dayjs from 'dayjs';
 
 export default function AssignmentManagement() {
   const [assignments, setAssignments] = useState([]);
@@ -224,7 +25,19 @@ export default function AssignmentManagement() {
   const [status, setStatus] = useState('');
   const [lessonContentId, setLessonContentId] = useState('');
   const [lessonContents, setLessonContents] = useState([]);
+  const [loadingLessons, setLoadingLessons] = useState(false);
 
+  const [editMode, setEditMode] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
+const [formData, setFormData] = useState({
+  title: '',
+  description: '',
+  dueDate: null,
+  downloadLink: '',
+  submitStatus: '',
+  status: '',
+  lessonContentId: ''
+});
   const API_URL = 'http://localhost:5000';
 
   useEffect(() => {
@@ -232,6 +45,9 @@ export default function AssignmentManagement() {
     fetchLessonContents();
   }, []);
 
+  const handleChange = (e) => {
+  setFormData({ ...formData, [e.target.name]: e.target.value });
+};
   const fetchAssignments = async () => {
     try {
       const res = await axios.get(`${API_URL}/assignments`);
@@ -243,41 +59,103 @@ export default function AssignmentManagement() {
 
   const fetchLessonContents = async () => {
     try {
-      const res = await axios.get(`${API_URL}/lesson-contents`);
-      setLessonContents(res.data);
-    } catch (err) {
-      console.error('Error fetching lesson contents:', err);
-    }
-  };
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const newAssignment = {
-      title,
-      description,
-      dueDate: dueDate ? dueDate.toISOString() : null,
-      downloadLink,
-      submitStatus,
-      status,
-      lessonContentId,
-    };
-
-    try {
-      await axios.post(`${API_URL}/assignments`, newAssignment);
-      fetchAssignments();
-      handleClose();
+      setLoadingLessons(true);
+      const res = await axios.get(`${API_URL}/lesson-content`);
+      if (Array.isArray(res.data)) {
+        setLessonContents(res.data);
+      } else {
+        setLessonContents([]);
+      }
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error('Error fetching lesson content:', error);
+      setLessonContents([]);
+    } finally {
+      setLoadingLessons(false);
     }
   };
+
+  const clearForm= () => {
+    setTitle('');
+    setDescription('');
+    setDueDate(null);
+    setDownloadLink('');
+    setSubmitStatus('');
+    setStatus('');
+    setLessonContentId('');
+    setEditMode(false);
+    setCurrentId(null);
+  };
+
+   const handleOpen = () => {
+    setOpen(true);
+    setEditMode(false);
+    clearForm();
+  };
+  const handleEdit = (assignment) => {
+    setTitle(assignment.title);
+    setDescription(assignment.description);
+    setDueDate(dayjs(assignment.dueDate));
+    setDownloadLink(assignment.downloadLink || '');
+    setSubmitStatus(assignment.submitStatus);
+    setStatus(assignment.status);
+    setLessonContentId(assignment.lessonContentId || '');
+    setCurrentId(assignment.id);
+    setEditMode(true);
+    setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this assignment?')) {
+      try {
+        await axios.delete(`${API_URL}/assignments/${id}`);
+        fetchAssignments();
+      } catch (error) {
+        console.error('Error deleting assignment:', error);
+      }
+    }
+  };
+const handleClose = () => {
+    setOpen(false);
+    clearForm();
+  };
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const newAssignment = {
+    title,
+    description,
+    dueDate: dueDate ? dueDate.toISOString() : null,
+    downloadLink,
+    submitStatus,
+    status,
+    lessonContentId,
+  };
+
+  try {
+    if (editMode && currentId) {
+      console.log("Updating assignment:", currentId, newAssignment);
+      const res = await axios.patch(`${API_URL}/assignments/${currentId}`, newAssignment);
+      console.log("Update response:", res.data);
+    } else {
+      const res = await axios.post(`${API_URL}/assignments`, newAssignment);
+              alert('Assignment added!');
+
+      console.log("Create response:", res.data);
+    }
+
+    fetchAssignments();
+    handleClose();
+  } catch (error) {
+    console.error("Submission error:", error.response?.data || error.message);
+  }
+};
+
+  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box p={3} sx={{mt:5}}>
+      <Box p={3} sx={{ mt: 5 }}>
         <Typography variant="h4" fontWeight={600} color="primary.main" mb={2}>
           Assignment Management
         </Typography>
@@ -294,30 +172,47 @@ export default function AssignmentManagement() {
         <TableContainer component={Paper}>
           <Table>
             <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
-              <TableRow>
-                <TableCell><b>Title</b></TableCell>
-                <TableCell><b>Due Date</b></TableCell>
-                <TableCell><b>Status</b></TableCell>
-                <TableCell><b>Submission</b></TableCell>
-                <TableCell><b>Lesson</b></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {assignments.map((a) => (
-                <TableRow key={a.id}>
-                  <TableCell>{a.title}</TableCell>
-                  <TableCell>{new Date(a.dueDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{a.status}</TableCell>
-                  <TableCell>{a.submitStatus}</TableCell>
-                  <TableCell>{a.lessonContent?.title || 'N/A'}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+  <TableRow>
+    <TableCell><b>Title</b></TableCell>
+    <TableCell><b>Description</b></TableCell>
+    <TableCell><b>Due Date</b></TableCell>
+    <TableCell><b>Download Link</b></TableCell>
+    <TableCell><b>Submit Status</b></TableCell>
+    <TableCell><b>Status</b></TableCell>
+    <TableCell><b>Lesson Title</b></TableCell>
+    <TableCell><b>Lesson ID</b></TableCell>
+    <TableCell><b>Actions</b></TableCell>
+  </TableRow>
+</TableHead>
+<TableBody>
+  {assignments.map((a) => (
+    <TableRow key={a.id}>
+      <TableCell>{a.title}</TableCell>
+      <TableCell>{a.description}</TableCell>
+      <TableCell>{new Date(a.dueDate).toLocaleDateString()}</TableCell>
+      <TableCell>
+        {a.downloadLink ? (
+          <a href={a.downloadLink} target="_blank" rel="noopener noreferrer">Download</a>
+        ) : 'N/A'}
+      </TableCell>
+      <TableCell>{a.submitStatus}</TableCell>
+      <TableCell>{a.status}</TableCell>
+      <TableCell>{a.lessonContent?.title || 'N/A'}</TableCell>
+      <TableCell>{a.lessonContentId}</TableCell>
+      <TableCell>
+        <IconButton onClick={() => handleEdit(a)}><Edit /></IconButton>
+        <IconButton onClick={() => handleDelete(a.id)}><Delete color="error" /></IconButton>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
+            
           </Table>
         </TableContainer>
 
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-          <DialogTitle>Add Assignment</DialogTitle>
+          <DialogTitle sx={{ color: "primary.main", fontWeight: 800 ,fontSize:'24px',}}>{editMode ? 'Edit Assignment' : 'Add Assignment'}</DialogTitle>
           <DialogContent>
             <form onSubmit={handleSubmit}>
               <Stack spacing={2} mt={1}>
@@ -338,15 +233,35 @@ export default function AssignmentManagement() {
                   <MenuItem value="Pending">Pending</MenuItem>
                   <MenuItem value="Completed">Completed</MenuItem>
                 </TextField>
-                <TextField select label="Lesson Content" value={lessonContentId} onChange={(e) => setLessonContentId(e.target.value)} required fullWidth>
-                  {lessonContents.map((lesson) => (
-                    <MenuItem key={lesson.id} value={lesson.id}>{lesson.title}</MenuItem>
-                  ))}
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  select
+                  label="Lesson Content"
+                  name="lessonContentId"
+                  value={lessonContentId}
+                  onChange={(e) => setLessonContentId(e.target.value)}
+                >
+                  {loadingLessons ? (
+                    <MenuItem disabled>
+                      <CircularProgress size={20} sx={{ mr: 1 }} /> Loading...
+                    </MenuItem>
+                  ) : lessonContents.length > 0 ? (
+                    lessonContents.map((lesson) => (
+                      <MenuItem key={lesson.id} value={lesson.id}>
+                        {lesson.label || lesson.title || `${lesson.type} - ${lesson.id}`}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem disabled>No lesson content found</MenuItem>
+                  )}
                 </TextField>
               </Stack>
               <DialogActions sx={{ mt: 2 }}>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button type="submit" variant="contained">Save</Button>
+                <Button onClick={handleSubmit} variant="contained" color="primary">
+            {editMode ? 'Update' : 'Submit'}
+          </Button>
               </DialogActions>
             </form>
           </DialogContent>
